@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import * as styledComponents from "../common/StyledComponents.js";
 import { BsPeopleFill } from "react-icons/bs";
+
+import MockAdapter from "axios-mock-adapter";
 
 const LoginBlock = styled.div`
     padding: 20px;
@@ -52,9 +54,7 @@ const SubmitButton = styled.button`
         box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
     }
 `;
-const LoginAlert = styled.div`
-    visibility: hidden;
-`;
+const LoginAlert = styled.div``;
 const LinkText = styled(Link)`
     box-sizing: border-box;
     display: block;
@@ -64,11 +64,22 @@ const LinkText = styled(Link)`
     color: #85c7cd;
 `;
 
+const mock = new MockAdapter(axios);
+
+mock.onPost("/login").reply(200, {
+    code: 200,
+    message: "success",
+    id: "test_user",
+});
+
 function Login() {
     // useState를 사용할때 : [원소의 현재 상태, setter함수]
     const [inputId, setInputId] = useState("");
     const [inputPw, setInputPw] = useState("");
     //inputId를 초기값 ""으로 설정하고 자바스크립트 변수로 사용가능
+    const [msg, setMsg] = useState("");
+
+    const navigate = useNavigate();
     const handleInputId = (event) => {
         setInputId(event.target.value);
     };
@@ -83,19 +94,29 @@ function Login() {
     };
 
     const onClickLogin = () => {
-        axios.post("https://reqres.in/api/login", body).then((res) => {
-            console.log(res.data);
+        setMsg("클릭");
+        if (!inputId) {
+            return alert("id를 입력하세요.");
+        } else if (!inputPw) {
+            return alert("password를 입력하세요");
+        }
+        axios.post("/login", body).then((res) => {
+            console.log("data : " + res.data);
+            console.log("code : " + res.data.code);
             if (res.data.code === 200) {
-                console.log("로그인 완료");
+                setMsg("로그인 완료");
+                localStorage.setItem("id", res.data.id);
+                localStorage.setItem("token", res.data.token);
+                navigate("/");
             }
             if (res.data.code === 400) {
-                console.log("ID, Password가 비어있습니다.");
+                setMsg("ID, Password가 비어있습니다.");
             }
             if (res.data.code === 401) {
-                console.log("존재하지 않는 ID입니다.");
+                setMsg("존재하지 않는 ID입니다.");
             }
             if (res.data.code === 402) {
-                console.log("Password가 틀립니다.");
+                setMsg("Password가 틀립니다.");
             }
         });
     };
@@ -127,6 +148,7 @@ function Login() {
                         />
                     </label>
                 </div>
+                <LoginAlert>{msg}</LoginAlert>
                 <LinkText to="/forgetPassword">Forget password?</LinkText>
                 <LinkText to="/createAccount">Create Account?</LinkText>
                 <div>

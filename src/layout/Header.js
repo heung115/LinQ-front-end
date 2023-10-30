@@ -1,4 +1,5 @@
-import React from "react";
+// import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Responsive from "../common/Responsive";
@@ -45,6 +46,7 @@ const Header = () => {
                         <Link to="/search">검색</Link>&nbsp;
                         <Link to="/login">로그인</Link>&nbsp;
                     </div>
+                    <div>아이디 : {localStorage.getItem("id")}</div>
                 </Wrapper>
             </HeaderBlock>
             <Spacer />

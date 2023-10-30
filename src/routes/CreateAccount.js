@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import * as styledComponents from "../common/StyledComponents.js";
@@ -14,7 +15,38 @@ const AccountBlock = styled.div`
     left: 50%; /* 왼쪽을 페이지의 50% 위치에 설정 */
     transform: translate(-50%, -50%);
 `;
+const TitleField = styled.h1`
+    text-align: center;
+    margin-bottom: 50px;
+`;
+const InputTextField = styled.input`
+    width: 100%;
+    height: 30px;
+    margin-bottom: 20px;
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 2px;
+    outline: none;
+`;
+const LabelText = styled.label`
+    color: #212121;
+    font-size: 14px;
+`;
+const SubmitButton = styled.button`
+    width: 100%;
+    padding: 10px 80px;
+    margin-top: 5px;
+    border-radius: 5px;
+    background-color: #85c7cd;
+    border: 0px;
 
+    &:active {
+        background-color: #0056b3;
+        transform: scale(0.98);
+        box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+    }
+`;
 function CreateAccount() {
     const [inputId, setInputId] = useState("");
     const [inputPw, setInputPw] = useState("");
@@ -44,54 +76,83 @@ function CreateAccount() {
     const handleInputPhone = (event) => {
         setInputPhone(event.target.value);
     };
+    // TODO : 이거 수정하기
+    let body = {
+        email: inputId,
+        password: inputPw,
+    };
 
+    const onClickSubmit = () => {
+        if (!inputName) {
+            return alert("이름을 입력하세요.");
+        } else if (!inputId) {
+            return alert("");
+        } else if (!inputPw) {
+            return alert();
+        } else if (!inputConfirmPw) {
+            return alert("");
+        } else if (!inputPhone) {
+            return alert("");
+        } else if (!inputEmail) {
+            return alert("");
+        }
+        axios.post("/CreateAccount", body).then((res) => {
+            console.log("data : " + res.data);
+            if (res.data.code == 200) {
+            } else {
+            }
+        });
+    };
     return (
         <styledComponents.BackgroundBlock>
             <AccountBlock>
+                <TitleField>Create Account</TitleField>
                 <div>
-                    <label>
+                    <LabelText>Name</LabelText>
+                    <InputTextField
+                        type="text"
+                        value={inputName}
+                        onChange={handleInputName}
+                    />
+                    <LabelText>
                         아이디
-                        <input
+                        <InputTextField
                             type="text"
                             name="input_id"
                             value={inputId}
                             onChange={handleInputId}
                         />
-                    </label>
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        value={inputEmail}
-                        onChange={handleInputEmail}
-                    />
-                    <label>Name</label>
-                    <input
-                        type="text"
-                        value={inputName}
-                        onChange={handleInputName}
-                    />
-                    <label>Password</label>
-                    <input
+                    </LabelText>
+                    <LabelText>Password</LabelText>
+                    <InputTextField
                         type="password"
                         value={inputPw}
                         onChange={handleInputPw}
                     />
-                    <label>Confirm Password</label>
-                    <input
+                    <LabelText>Confirm Password</LabelText>
+                    <InputTextField
                         type="password"
                         value={inputConfirmPw}
                         onChange={handleInputConfirmPw}
                     />
-                    <label>
-                        <input
-                            type="phone"
-                            name="input_Phone"
-                            placeholder="--"
-                            value={inputPhone}
-                            onChange={handleInputPhone}
-                        />
-                    </label>
+                    <LabelText>Phone number</LabelText>
+                    <InputTextField
+                        type="phone"
+                        name="input_Phone"
+                        placeholder="--"
+                        value={inputPhone}
+                        onChange={handleInputPhone}
+                    />
+                    <LabelText>Email</LabelText>
+                    <InputTextField
+                        type="email"
+                        value={inputEmail}
+                        onChange={handleInputEmail}
+                    />
                 </div>
+                <SubmitButton type="button" onClick={onClickSubmit}>
+                    submit
+                </SubmitButton>
             </AccountBlock>
         </styledComponents.BackgroundBlock>
     );
