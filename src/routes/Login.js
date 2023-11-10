@@ -3,13 +3,14 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import * as styledComponents from "../common/StyledComponents.js";
+import { useCookies } from "react-cookie";
 import { BsPeopleFill } from "react-icons/bs";
 
 import MockAdapter from "axios-mock-adapter";
 
 const LoginBlock = styled.div`
     padding: 20px;
-    width: 20%;
+    width: 300px;
     border-radius: 10px;
     background: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -79,6 +80,8 @@ function Login() {
     //inputId를 초기값 ""으로 설정하고 자바스크립트 변수로 사용가능
     const [msg, setMsg] = useState("");
 
+    //const [cookies, setCookie] = useCookies(["id"]);
+
     const navigate = useNavigate();
     const handleInputId = (event) => {
         setInputId(event.target.value);
@@ -107,6 +110,8 @@ function Login() {
                 setMsg("로그인 완료");
                 localStorage.setItem("id", res.data.id);
                 localStorage.setItem("token", res.data.token);
+
+                window.location.replace("/");
                 navigate("/");
             }
             if (res.data.code === 400) {
