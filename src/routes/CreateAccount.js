@@ -78,8 +78,12 @@ function CreateAccount() {
     };
     // TODO : 이거 수정하기
     let body = {
-        email: inputId,
+        id: inputId,
+        email: inputEmail,
         password: inputPw,
+        name: inputName,
+        nickname: "test",
+        birth: "11110000",
     };
 
     const onClickSubmit = () => {
@@ -95,6 +99,8 @@ function CreateAccount() {
             return alert("");
         } else if (!inputEmail) {
             return alert("");
+        } else if (inputId !== inputConfirmPw) {
+            return alert("불일치");
         }
         axios.post("/CreateAccount", body).then((res) => {
             console.log("data : " + res.data);
