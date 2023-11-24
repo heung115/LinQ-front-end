@@ -33,7 +33,7 @@ const Wrapper = styled(Responsive)`
     }
 `;
 const Spacer = styled.div`
-    height: 2rem;
+    height: 3rem;
 `;
 
 const Header = () => {
@@ -46,6 +46,8 @@ const Header = () => {
                         <Link to="/">홈</Link>&nbsp;
                         <Link to="/search">검색</Link>&nbsp;
                         <Link to="/login">로그인</Link>&nbsp;
+                        <Link to="/board">게시판</Link>&nbsp;
+                        <Link to="/boardWrite">작성</Link>&nbsp;
                     </div>
                     <div>아이디 : {localStorage.getItem("id")}</div>
                     <button onClick={() => logout()}>로그아웃</button>

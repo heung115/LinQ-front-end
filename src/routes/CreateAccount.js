@@ -47,6 +47,9 @@ const SubmitButton = styled.button`
         box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
     }
 `;
+const Background = styled.div`
+    height: 1000px;
+`;
 function CreateAccount() {
     const [inputId, setInputId] = useState("");
     const [inputPw, setInputPw] = useState("");
@@ -102,7 +105,7 @@ function CreateAccount() {
         } else if (inputId !== inputConfirmPw) {
             return alert("불일치");
         }
-        axios.post("/CreateAccount", body).then((res) => {
+        axios.post("/", body).then((res) => {
             console.log("data : " + res.data);
             if (res.data.code == 200) {
             } else {
@@ -111,55 +114,57 @@ function CreateAccount() {
     };
     return (
         <styledComponents.BackgroundBlock>
-            <AccountBlock>
-                <TitleField>Create Account</TitleField>
-                <div>
-                    <LabelText>Name</LabelText>
-                    <InputTextField
-                        type="text"
-                        value={inputName}
-                        onChange={handleInputName}
-                    />
-                    <LabelText>
-                        아이디
+            <Background>
+                <AccountBlock>
+                    <TitleField>Create Account</TitleField>
+                    <div>
+                        <LabelText>Name</LabelText>
                         <InputTextField
                             type="text"
-                            name="input_id"
-                            value={inputId}
-                            onChange={handleInputId}
+                            value={inputName}
+                            onChange={handleInputName}
                         />
-                    </LabelText>
-                    <LabelText>Password</LabelText>
-                    <InputTextField
-                        type="password"
-                        value={inputPw}
-                        onChange={handleInputPw}
-                    />
-                    <LabelText>Confirm Password</LabelText>
-                    <InputTextField
-                        type="password"
-                        value={inputConfirmPw}
-                        onChange={handleInputConfirmPw}
-                    />
-                    <LabelText>Phone number</LabelText>
-                    <InputTextField
-                        type="phone"
-                        name="input_Phone"
-                        placeholder="--"
-                        value={inputPhone}
-                        onChange={handleInputPhone}
-                    />
-                    <LabelText>Email</LabelText>
-                    <InputTextField
-                        type="email"
-                        value={inputEmail}
-                        onChange={handleInputEmail}
-                    />
-                </div>
-                <SubmitButton type="button" onClick={onClickSubmit}>
-                    submit
-                </SubmitButton>
-            </AccountBlock>
+                        <LabelText>
+                            아이디
+                            <InputTextField
+                                type="text"
+                                name="input_id"
+                                value={inputId}
+                                onChange={handleInputId}
+                            />
+                        </LabelText>
+                        <LabelText>Password</LabelText>
+                        <InputTextField
+                            type="password"
+                            value={inputPw}
+                            onChange={handleInputPw}
+                        />
+                        <LabelText>Confirm Password</LabelText>
+                        <InputTextField
+                            type="password"
+                            value={inputConfirmPw}
+                            onChange={handleInputConfirmPw}
+                        />
+                        <LabelText>Phone number</LabelText>
+                        <InputTextField
+                            type="phone"
+                            name="input_Phone"
+                            placeholder="--"
+                            value={inputPhone}
+                            onChange={handleInputPhone}
+                        />
+                        <LabelText>Email</LabelText>
+                        <InputTextField
+                            type="email"
+                            value={inputEmail}
+                            onChange={handleInputEmail}
+                        />
+                    </div>
+                    <SubmitButton type="button" onClick={onClickSubmit}>
+                        submit
+                    </SubmitButton>
+                </AccountBlock>
+            </Background>
         </styledComponents.BackgroundBlock>
     );
 }

@@ -6,8 +6,6 @@ import * as styledComponents from "../common/StyledComponents.js";
 import { useCookies } from "react-cookie";
 import { BsPeopleFill } from "react-icons/bs";
 
-import MockAdapter from "axios-mock-adapter";
-
 const LoginBlock = styled.div`
     padding: 20px;
     width: 300px;
@@ -64,15 +62,9 @@ const LinkText = styled(Link)`
     text-decoration: none;
     color: #85c7cd;
 `;
-
-const mock = new MockAdapter(axios);
-
-mock.onPost("/login").reply(200, {
-    code: 200,
-    message: "success",
-    id: "test_user",
-});
-
+const Background = styled.div`
+    height: 1000px;
+`;
 function Login() {
     // useState를 사용할때 : [원소의 현재 상태, setter함수]
     const [inputId, setInputId] = useState("");
@@ -95,9 +87,12 @@ function Login() {
         id: inputId,
         password: inputPw,
     };
-
+    const handleOnKeyPress = (e) => {
+        if (e.key === "Enter") {
+            onClickLogin(); // Enter 입력이 되면 클릭 이벤트 실행
+        }
+    };
     const onClickLogin = () => {
-        setMsg("클릭");
         if (!inputId) {
             return alert("id를 입력하세요.");
         } else if (!inputPw) {
@@ -108,8 +103,8 @@ function Login() {
             console.log("code : " + res.data.code);
             if (res.data.code === 200) {
                 setMsg("로그인 완료");
-                localStorage.setItem("id", res.data.id);
-                localStorage.setItem("token", res.data.token);
+                localStorage.setItem("id", inputId);
+                localStorage.setItem("token", res.token);
 
                 window.location.replace("/");
                 navigate("/");
@@ -128,40 +123,43 @@ function Login() {
 
     return (
         <styledComponents.BackgroundBlock>
-            <LoginBlock>
-                <TitleField>Login</TitleField>
-                <div>
-                    <label htmlFor="input_id">
-                        {/* <BsPeopleFill /> */}
-                        <IdField
-                            type="text"
-                            name="input_id"
-                            placeholder="Type your username"
-                            value={inputId}
-                            onChange={handleInputId}
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label htmlFor="input_pw">
-                        <PwField
-                            type="password"
-                            name="input_pw"
-                            placeholder="Type your password"
-                            value={inputPw}
-                            onChange={handleInputPw}
-                        />
-                    </label>
-                </div>
-                <LoginAlert>{msg}</LoginAlert>
-                <LinkText to="/forgetPassword">Forget password?</LinkText>
-                <LinkText to="/createAccount">Create Account?</LinkText>
-                <div>
-                    <SubmitButton type="button" onClick={onClickLogin}>
-                        Login
-                    </SubmitButton>
-                </div>
-            </LoginBlock>
+            <Background>
+                <LoginBlock>
+                    <TitleField>Login</TitleField>
+                    <div>
+                        <label htmlFor="input_id">
+                            {/* <BsPeopleFill /> */}
+                            <IdField
+                                type="text"
+                                name="input_id"
+                                placeholder="Type your username"
+                                value={inputId}
+                                onChange={handleInputId}
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label htmlFor="input_pw">
+                            <PwField
+                                type="password"
+                                name="input_pw"
+                                placeholder="Type your password"
+                                value={inputPw}
+                                onChange={handleInputPw}
+                                onKeyDown={handleOnKeyPress}
+                            />
+                        </label>
+                    </div>
+                    <LoginAlert>{msg}</LoginAlert>
+                    <LinkText to="/forgetPassword">Forget password?</LinkText>
+                    <LinkText to="/createAccount">Create Account?</LinkText>
+                    <div>
+                        <SubmitButton type="button" onClick={onClickLogin}>
+                            Login
+                        </SubmitButton>
+                    </div>
+                </LoginBlock>
+            </Background>
         </styledComponents.BackgroundBlock>
     );
 }
