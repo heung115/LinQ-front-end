@@ -3,15 +3,23 @@ import MockAdapter from "axios-mock-adapter";
 
 const mock = new MockAdapter(axios);
 
-mock.onGet("/boardList").reply(200, {
-    data: [
-        { pagination: "1", title: "test_page1", idx: "1" },
-        { pagination: "1", title: "test_page2", idx: "2" },
-        { pagination: "1", title: "test_page3", idx: "3" },
-        { pagination: "1", title: "test_page4", idx: "4" },
-        { pagination: "1", title: "test_page5", idx: "5" },
-        { pagination: "1", title: "test_page6", idx: "6" },
-    ],
+mock.onGet("/boardlist").reply((config) => {
+    // config.params에는 요청의 쿼리 매개변수가 포함됩니다.
+    const page = parseInt(config.params.page) || 1; // 기본값은 1로 설정
+
+    // 가짜 응답 데이터 생성
+    const responseData = Array.from({ length: 14 }, (_, index) => ({
+        pagination: "1",
+        title: `test_page${index + 1}`, // 7부터 13까지
+        idx: `${index + 1}`,
+    }));
+
+    // 실제 데이터를 6개씩 페이지에 맞춰 반환
+    const startIndex = (page - 1) * 6;
+    const slicedData = responseData.slice(startIndex, startIndex + 6);
+
+    // 200 상태 코드와 함께 응답 데이터 반환
+    return [200, { data: slicedData }];
 });
 
 mock.onGet("/boardDetail").reply(200, {
@@ -26,15 +34,16 @@ mock.onGet("/boardDetail").reply(200, {
             writerId: "test id",
             writerNickname: "안녕하세요나는주코야키",
             writerProfileImage: null,
+            img: "123",
         },
     ],
     code: 200,
 });
 
-mock.onPost("/login").reply(200, {
-    code: 200,
-    message: "success",
+mock.onPost("/auth/sign-in").reply(200, {
+    code: "SU",
     id: "test_user",
+    token: "123",
 });
 
 export default mock;

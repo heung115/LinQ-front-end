@@ -5,11 +5,12 @@ import styled from "styled-components";
 
 import LoadingPage from "./LoadingPage.js";
 import * as styledComponents from "../common/StyledComponents.js";
-
+import { API } from "../config.js";
 import { CiHeart } from "react-icons/ci";
 import { FaRegCommentDots } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import { MdNavigateBefore } from "react-icons/md";
+import UserToken from "../component/UserToken.js";
 
 const Components = styled.div`
     display: grid;
@@ -110,18 +111,32 @@ const BoardTitleBlock = styled(BoardTextBlock)`
     font-weight: bold;
 `;
 const BoardMainBlock = styled(BoardTextBlock)``;
+
 const Size = styled.div`
     height: 900px;
 `;
-
+const Button = styled.button`
+    width: 80px;
+    height: 30px;
+    margin 20px;
+`;
 const BoardList = () => {
     const [boardList, setBoardList] = useState([]);
-
-    const [curPage, setCurPage] = useState(0);
+    const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+    };
+    const [search, setSearch] = useState({
+        page: 1,
+        searchValue: "",
+    });
     const getBoardList = async () => {
         try {
-            const resp = await (await axios.get("/boardList")).data;
-            setBoardList(resp.data);
+            const resp = await axios.get(`${API.BOARDLISTALL}`, {
+                headers,
+            });
+            console.log("resp:" + JSON.stringify(resp));
+            console.log("page:" + search.page);
+            setBoardList(resp.data.list);
         } catch (err) {
             console.log("Register err : ", err.response);
             const statusCode = err.response.status;
@@ -130,12 +145,32 @@ const BoardList = () => {
         }
     };
 
+    const nextPage = (event) => {
+        setSearch({
+            ...search,
+            page: search.page + 1,
+        });
+    };
+    const backPage = (event) => {
+        if (search.page > 1) {
+            setSearch({
+                ...search,
+                page: search.page - 1,
+            });
+        }
+    };
     useEffect(() => {
-        getBoardList(); // 1) 게시글 목록 조회 함수 호출
+        getBoardList();
+        console.log("board:" + boardList);
     }, []);
+
+    useEffect(() => {
+        getBoardList();
+    }, [search]);
 
     return (
         <styledComponents.BackgroundBlock>
+            <UserToken />
             <Size>
                 {boardList.length > 0 ? (
                     <Components>
@@ -169,9 +204,9 @@ const BoardList = () => {
                         </MiniMyPage>
                         <BoardBlockUl>
                             {boardList.map((board) => (
-                                <BoardBlock key={board.idx}>
+                                <BoardBlock key={board.boardNumber}>
                                     <Link
-                                        to={`/board/${board.idx}`}
+                                        to={`/board/${board.boardNumber}`}
                                         style={{
                                             textDecoration: "none",
                                             color: "black",
@@ -190,12 +225,14 @@ const BoardList = () => {
                                 </BoardBlock>
                             ))}
                         </BoardBlockUl>
-                        <button>
-                            <MdNavigateBefore />
-                        </button>
-                        <button>
-                            <MdNavigateNext />
-                        </button>
+                        <div>
+                            <Button onClick={backPage}>
+                                <MdNavigateBefore />
+                            </Button>
+                            <Button onClick={nextPage}>
+                                <MdNavigateNext />
+                            </Button>
+                        </div>
                     </Components>
                 ) : (
                     <LoadingPage />

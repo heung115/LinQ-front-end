@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import * as styledComponents from "../common/StyledComponents.js";
+import { API } from "../config.js";
 
 const AccountBlock = styled.div`
     padding: 20px;
@@ -86,7 +87,7 @@ function CreateAccount() {
         password: inputPw,
         name: inputName,
         nickname: "test",
-        birth: "11110000",
+        birth: "11110101",
     };
 
     const onClickSubmit = () => {
@@ -102,13 +103,17 @@ function CreateAccount() {
             return alert("");
         } else if (!inputEmail) {
             return alert("");
-        } else if (inputId !== inputConfirmPw) {
+        } else if (inputPw !== inputConfirmPw) {
             return alert("불일치");
         }
-        axios.post("/", body).then((res) => {
+        console.log(body);
+        axios.post(`${API.SIGNUP}`, body).then((res) => {
             console.log("data : " + res.data);
-            if (res.data.code == 200) {
+            if (res.data.code == "SU") {
+                alert("완료!");
+                window.location.replace("/");
             } else {
+                console.log(res);
             }
         });
     };

@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
+import { useParams } from "react-router-dom";
+import { API } from "../config.js";
 
 import * as styledComponents from "../common/StyledComponents.js";
 import LoadingPage from "./LoadingPage.js";
+import BoardList from "./BoardList.js";
 
 const BoardBlockGrid = styled.div`
     display: grid;
@@ -61,35 +64,69 @@ const Spacer = styled.div`
 
 const BoardDetail = () => {
     const [boardData, setBoardData] = useState([]);
+    const [imgList, setImgList] = useState([]);
+
+    const [imagePath, setImagePath] = useState("");
+    const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+    };
+    const { idx } = useParams();
 
     const getBoarData = async () => {
-        const resp = await (await axios.get("/boardDetail")).data;
-        setBoardData(resp.data);
+        const resp = await (
+            await axios.get(`${API.BOARDEDATIL}` + "/" + idx, {
+                headers,
+            })
+        ).data;
+        console.log(resp);
+        setBoardData(resp);
+        setImgList(boardData.boardImageList);
+
         //console.log(resp.data);
     };
 
     useEffect(() => {
         getBoarData();
+        if (getBoarData.length > 0) {
+            setImagePath("img/" + boardData.img);
+        }
     }, []);
+
+    useEffect(() => {
+        setImgList(boardData.boardImageList);
+        console.log("board :" + JSON.stringify(boardData));
+    }, [boardData]);
+
+    useEffect(() => {
+        console.log("img :" + imgList);
+    }, [imgList]);
     return (
         <styledComponents.BackgroundBlock>
             <Spacer></Spacer>
-            {boardData.length > 0 ? (
+            {boardData != null && imgList != null ? (
                 <BoardBlockGrid>
-                    <BoardImageBlock>img</BoardImageBlock>
+                    <BoardImageBlock>
+                        {imgList.map((url, index) => (
+                            <img
+                                key={index}
+                                src={url}
+                                alt={`이미지 ${index + 1}`}
+                            />
+                        ))}
+                    </BoardImageBlock>
                     <BoardMainTextBlock>
-                        <BoardTitleBlock>{boardData[0].title}</BoardTitleBlock>
+                        <BoardTitleBlock>{boardData.title}</BoardTitleBlock>
                         <BoardContentBlock>
-                            {boardData[0].content}
+                            {boardData.content}
                         </BoardContentBlock>
                         <BoardDateBlock>
-                            {boardData[0].writeDatetime}
+                            {boardData.writeDatetime}
                         </BoardDateBlock>
                         <BoardUserIdBlock>
-                            {boardData[0].writerId}
+                            {boardData.writerId}
                         </BoardUserIdBlock>
                         <BoardUserNicknameBlock>
-                            {boardData[0].writerNickname}
+                            {boardData.writerNickname}
                         </BoardUserNicknameBlock>
                     </BoardMainTextBlock>
 

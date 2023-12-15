@@ -24,6 +24,7 @@ function App() {
                 <Route path="/board" element={<BoardList />} />
                 <Route path="/board/:idx" element={<BoardDetail />} />
                 <Route path="/boardWrite" element={<BoardWrite />} />
+                <Route path="/search" element={<Search />} />
             </Routes>
         </div>
     );

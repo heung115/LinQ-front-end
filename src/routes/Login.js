@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import * as styledComponents from "../common/StyledComponents.js";
+import { API } from "../config.js";
 import { useCookies } from "react-cookie";
 import { BsPeopleFill } from "react-icons/bs";
 
@@ -98,27 +99,41 @@ function Login() {
         } else if (!inputPw) {
             return alert("password를 입력하세요");
         }
-        axios.post("/login", body).then((res) => {
-            console.log("data : " + res.data);
-            console.log("code : " + res.data.code);
-            if (res.data.code === 200) {
-                setMsg("로그인 완료");
-                localStorage.setItem("id", inputId);
-                localStorage.setItem("token", res.token);
-
-                window.location.replace("/");
-                navigate("/");
-            }
-            if (res.data.code === 400) {
-                setMsg("ID, Password가 비어있습니다.");
-            }
-            if (res.data.code === 401) {
-                setMsg("존재하지 않는 ID입니다.");
-            }
-            if (res.data.code === 402) {
-                setMsg("Password가 틀립니다.");
-            }
-        });
+        try {
+        } catch (err) {}
+        axios
+            .post(`${API.LOGIN}`, body)
+            .then((res) => {
+                console.log("data : " + JSON.stringify(res.data));
+                console.log("code : " + res.data.code);
+                if (res.data.code === "SU") {
+                    setMsg("로그인 완료");
+                    localStorage.setItem("id", inputId);
+                    localStorage.setItem("token", res.data.token);
+                    window.location.replace("/");
+                    navigate("/");
+                }
+                if (res.data.code === "VF") {
+                    setMsg("ID, Password가 비어있습니다.");
+                }
+                if (res.data.code === "SF") {
+                    setMsg("존재하지 않는 ID/Password입니다.");
+                }
+                if (res.data.code === "DBE") {
+                    setMsg("데이터베이스 오류.");
+                }
+            })
+            .catch((err) => {
+                if (err.response.data.code === "VF") {
+                    setMsg("ID, Password가 비어있습니다.");
+                }
+                if (err.response.data.code === "SF") {
+                    setMsg("존재하지 않는 ID/Password입니다.");
+                }
+                if (err.response.data.code === "DBE") {
+                    setMsg("데이터베이스 오류.");
+                }
+            });
     };
 
     return (

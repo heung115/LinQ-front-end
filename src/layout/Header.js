@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Responsive from "../common/Responsive";
 import logout from "../Logout";
+import LoginInfo from "../component/LoginInfo";
 const HeaderBlock = styled.div`
     position: fixed; //화면을 움직여도 고정되어 있음.
     z-index: 10;
@@ -49,8 +50,12 @@ const Header = () => {
                         <Link to="/board">게시판</Link>&nbsp;
                         <Link to="/boardWrite">작성</Link>&nbsp;
                     </div>
-                    <div>아이디 : {localStorage.getItem("id")}</div>
-                    <button onClick={() => logout()}>로그아웃</button>
+                    <LoginInfo />
+                    {localStorage.getItem("token") ? (
+                        <button onClick={() => logout()}>로그아웃</button>
+                    ) : (
+                        <div></div>
+                    )}
                 </Wrapper>
             </HeaderBlock>
             <Spacer />
